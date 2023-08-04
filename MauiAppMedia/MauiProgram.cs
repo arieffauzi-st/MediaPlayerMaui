@@ -28,10 +28,9 @@ public static class MauiProgram
 									options.SetShouldSuppressExceptionsInAnimations(true);
 								})
 #endif
-								.UseMauiCommunityToolkitMarkup()
 								.UseMauiCommunityToolkitMediaElement()
-								.UseMauiCommunityToolkitMaps("") // You should add your own key here from bingmapsportal.com
-								.UseMauiApp<App>()
+                                .UseMauiCommunityToolkitMarkup()
+                                .UseMauiApp<App>()
                                 .ConfigureFonts(fonts =>
                                 {
                                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

@@ -49,6 +49,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\iconaspect.png" />
+	  <None Remove="Resources\Images\iconback.png" />
+	  <None Remove="Resources\Images\iconfullscreen.png" />
+	  <None Remove="Resources\Images\iconorientation.png" />
+	  <None Remove="Resources\Images\muteicon.png" />
+	  <None Remove="Resources\Images\pauseicon02.png" />
+	  <None Remove="Resources\Images\playicon02.png" />
+	  <None Remove="Resources\Images\volumeicon.png" />
+	  <None Remove="Resources\Raw\abc.mp4" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.2.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Core" Version="5.2.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Maps" Version="1.0.3" />
@@ -56,12 +68,24 @@
 		<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="2.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Mopups" Version="1.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiAsset Update="Resources\Raw\abc.mp4">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </MauiAsset>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="FullScreenPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Views\MediaElement\MediaElementPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionMauiAppMediaHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

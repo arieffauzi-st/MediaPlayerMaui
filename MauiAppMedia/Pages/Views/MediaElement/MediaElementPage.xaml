@@ -12,7 +12,7 @@
              Title="MediaElement"
              Unloaded="BasePage_Unloaded">
     <pages:BasePage.Resources>
-        <toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
+        <!--<toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />-->
         <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
     </pages:BasePage.Resources>
 
@@ -38,8 +38,21 @@
                 PositionChanged="OnPositionChanged"
                 StateChanged="OnStateChanged"
                 SeekCompleted="OnSeekCompleted"/>
+            <ImageButton
+                        x:Name="btnFullScreen" Clicked="btnFullScreen_Clicked"
+                        Grid.Row="0"
+                        Margin="10"
+                        HeightRequest="40"
+                        HorizontalOptions="End"
+                        Source="iconfullscreen.png"
+                        VerticalOptions="Start"
+                        WidthRequest="40">
+                <ImageButton.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="White" />
+                </ImageButton.Behaviors>
+            </ImageButton>
 
-            <HorizontalStackLayout Grid.Row="1" Padding="0,0,0,15">
+            <HorizontalStackLayout Grid.Row="3" Padding="0,0,0,15">
                 <Label HorizontalOptions="Center">
                     <Label.Text>
                         <MultiBinding StringFormat="{}Position: {0}/{1} - Current State: {2}">
@@ -52,9 +65,20 @@
 
             </HorizontalStackLayout>
 
-            <Grid Grid.Row="2" Padding="0,10,0,10" ColumnDefinitions="*,*,*,*" ColumnSpacing="5">          
-                <Button Grid.Column="0" Text="Play" Clicked="OnPlayClicked" />
-                <Button Grid.Column="1" Text="Pause" Clicked="OnPauseClicked" />
+            <Slider
+                x:Name="positionSlider"
+                Grid.Row="1"
+                MinimumTrackColor="Brown"
+                DragStarted="Slider_DragStarted"
+                DragCompleted="Slider_DragCompleted"/>
+
+
+            <Grid Grid.Row="2" Padding="0,10,0,10" ColumnDefinitions="*,*,*,*" ColumnSpacing="5">
+                <!--<ImageButton Grid.Column="0" Clicked="OnPlayClicked" Source="iconsplay.png"/>
+                <ImageButton Grid.Column="1" Clicked="OnPauseClicked" Source="pauseicon.png" HeightRequest="50" WidthRequest="50" />-->
+                <ImageButton Grid.Column="0" x:Name="playButton" Clicked="OnPlayClicked" 
+                             HeightRequest="30" WidthRequest="40" Source="pauseicon02.png" />
+
                 <Button Grid.Column="2" Text="Stop" Clicked="OnStopClicked" />
                 <Button Grid.Column="3" Text="Mute" Clicked="OnMuteClicked">
                     <Button.Triggers>
@@ -71,14 +95,7 @@
                     </Button.Triggers>
                 </Button>
             </Grid>
-
-            <Slider
-                x:Name="positionSlider"
-                Grid.Row="3"
-                MinimumTrackColor="Gray"
-                DragStarted="Slider_DragStarted"
-                DragCompleted="Slider_DragCompleted"/>
-
+            
             <VerticalStackLayout Padding="0,20,0,0" Grid.Row="4" Spacing="5">
                 <Button Text="Change Source" Clicked="ChangeSourceClicked" />
 
@@ -104,7 +121,8 @@
                 <Button Text="+" Clicked="OnSpeedPlusClicked" />
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5">
+            <!--<HorizontalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5">
+                <Slider x:Name="volumeSlider" Minimum="0" Maximum="1" Value="{Binding Source={x:Reference mediaElement}, Path=Volume}" WidthRequest="200" />
                 <Label Margin="20,10">
                     <Label.FormattedText>
                         <FormattedString>
@@ -116,14 +134,21 @@
 
                 <Button Text="-" Clicked="OnVolumeMinusClicked" />
                 <Button Text="+" Clicked="OnVolumePlusClicked" />
-            </HorizontalStackLayout>
-        
+            </HorizontalStackLayout>-->
+            
+            <VerticalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5">
+                <Grid ColumnDefinitions="*,*">
+                    <ImageButton Grid.Column="0" x:Name="muteButton" Clicked="OnMuteClicked" HeightRequest="30" WidthRequest="40" Source="volumeicon.png" />
+                    <Slider x:Name="volumeSlider" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding Source={x:Reference mediaElement}, Path=Volume}" WidthRequest="200" />
+                </Grid>
+            </VerticalStackLayout>
+
             <VerticalStackLayout Grid.Row="7">
                 <HorizontalStackLayout Padding="0,0,0,10">
                     <Switch
                         Margin="0,0,5,0"
                         ThumbColor="White"
-                        OnColor="LimeGreen"
+                        OnColor="Purple"
                         IsToggled="{Binding Source={x:Reference mediaElement}, Path=ShouldShowPlaybackControls}" />
                     <Label
                         VerticalOptions="Center"
@@ -133,7 +158,7 @@
                     <Switch
                         Margin="0,0,5,0"
                         ThumbColor="White"
-                        OnColor="LimeGreen"
+                        OnColor="Purple"
                         IsToggled="{Binding Source={x:Reference mediaElement}, Path=ShouldLoopPlayback}" />
                     <Label
                         VerticalOptions="Center"
@@ -143,7 +168,7 @@
                     <Switch
                         Margin="0,0,5,0"
                         ThumbColor="White"
-                        OnColor="LimeGreen"
+                        OnColor="Purple"
                         IsToggled="{Binding Source={x:Reference mediaElement}, Path=ShouldKeepScreenOn}" />
                     <Label
                         VerticalOptions="Center"

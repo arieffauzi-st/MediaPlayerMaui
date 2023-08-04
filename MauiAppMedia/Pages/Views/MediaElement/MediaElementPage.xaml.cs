@@ -3,6 +3,10 @@ using CommunityToolkit.Maui.Core.Primitives;
 using MauiAppMedia.ViewModels.Views;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Extensions.Logging;
+using CommunityToolkit.Mvvm.Messaging;
+using MauiAppMedia.Services;
+using Mopups.Services;
+using SystemUri = System.Uri;
 
 namespace MauiAppMedia.Pages.Views;
 
@@ -14,12 +18,20 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	const string loadLocalResource = "Load Local Resource";
 	const string resetSource = "Reset Source to null";
 
-	public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
+    bool fullScreen = false;
+
+    public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
 	{
 		InitializeComponent();
 
 		this.logger = logger;
+//#if ANDROID
+//            btnFullScreen.IsVisible = true;
+//#elif IOS
+//        btnFullScreen.IsVisible = false;
+//#endif
 		mediaElement.PropertyChanged += MediaElement_PropertyChanged;
+
 	}
 
 	void MediaElement_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -64,54 +76,86 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 		}
 	}
 
-	void OnVolumeMinusClicked(object? sender, EventArgs e)
-	{
-		if (mediaElement.Volume >= 0)
-		{
-			if (mediaElement.Volume < .1)
-			{
-				mediaElement.Volume = 0;
+	//void OnVolumeMinusClicked(object? sender, EventArgs e)
+	//{
+	//	if (mediaElement.Volume >= 0)
+	//	{
+	//		if (mediaElement.Volume < .1)
+	//		{
+	//			mediaElement.Volume = 0;
 
-				return;
-			}
+	//			return;
+	//		}
 
-			mediaElement.Volume -= .1;
-		}
-	}
+	//		mediaElement.Volume -= .1;
+	//	}
+	//}
 
-	void OnVolumePlusClicked(object? sender, EventArgs e)
-	{
-		if (mediaElement.Volume < 1)
-		{
-			if (mediaElement.Volume > .9)
-			{
-				mediaElement.Volume = 1;
+	//void OnVolumePlusClicked(object? sender, EventArgs e)
+	//{
+	//	if (mediaElement.Volume < 1)
+	//	{
+	//		if (mediaElement.Volume > .9)
+	//		{
+	//			mediaElement.Volume = 1;
 
-				return;
-			}
+	//			return;
+	//		}
 
-			mediaElement.Volume += .1;
-		}
-	}
+	//		mediaElement.Volume += .1;
+	//	}
+	//}
 
-	void OnPlayClicked(object? sender, EventArgs e)
-	{
-		mediaElement.Play();
-	}
+	//void OnPlayClicked(object? sender, EventArgs e)
+	//{
+	//	mediaElement.Play();
+	//}
 
-	void OnPauseClicked(object? sender, EventArgs e)
-	{
-		mediaElement.Pause();
-	}
+	//void OnPauseClicked(object? sender, EventArgs e)
+	//{
+	//	mediaElement.Pause();
+	//}
+    void OnPlayClicked(object? sender, EventArgs e)
+    {
+        if (mediaElement.CurrentState == MediaElementState.Playing)
+        {
+            mediaElement.Pause();
+            playButton.Source = "playicon02.png"; 
+        }
+        else
+        {
+            mediaElement.Play();
+            playButton.Source = "pauseicon02.png"; 
+        }
+    }
 
-	void OnStopClicked(object? sender, EventArgs e)
+    void OnStopClicked(object? sender, EventArgs e)
 	{
 		mediaElement.Stop();
 	}
 
+	//void OnMuteClicked(object? sender, EventArgs e)
+	//{
+	//	mediaElement.ShouldMute = !mediaElement.ShouldMute;
+	//}
+
 	void OnMuteClicked(object? sender, EventArgs e)
 	{
 		mediaElement.ShouldMute = !mediaElement.ShouldMute;
+
+		// Update icon image and set volume based on the mute status
+		if (mediaElement.ShouldMute)
+		{
+			muteButton.Source = "muteicon.png";
+			volumeSlider.IsEnabled = false;
+			mediaElement.Volume = 0;
+		}
+		else
+		{
+			muteButton.Source = "volumeicon.png";
+			volumeSlider.IsEnabled = true;
+			mediaElement.Volume = volumeSlider.Value;
+		}
 	}
 
 	void BasePage_Unloaded(object? sender, EventArgs e)
@@ -148,46 +192,46 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 		mediaElement.Source = MediaSource.FromUri(customSourceEntry.Text);
 	}
 
-	async void ChangeSourceClicked(System.Object sender, System.EventArgs e)
-	{
-		var result = await DisplayActionSheet("Choose a source", "Cancel", null,
-			loadOnlineMp4, loadHls, loadLocalResource, resetSource);
+	//async void ChangeSourceClicked(System.Object sender, System.EventArgs e)
+	//{
+	//	var result = await DisplayActionSheet("Choose a source", "Cancel", null,
+	//		loadOnlineMp4, loadHls, loadLocalResource, resetSource);
 
-		switch (result)
-		{
-			case loadOnlineMp4:
-				mediaElement.Source =
-					MediaSource.FromUri(
-						"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-				return;
+	//	switch (result)
+	//	{
+	//		case loadOnlineMp4:
+	//			mediaElement.Source =
+	//				MediaSource.FromUri(
+	//					"cc");
+	//			return;
 
-			case loadHls:
-				mediaElement.Source
-					= MediaSource.FromUri(
-						"https://wowza.peer5.com/live/smil:bbb_abr.smil/playlist.m3u8");
-				return;
+	//		case loadHls:
+	//			mediaElement.Source
+	//				= MediaSource.FromUri(
+	//					"https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8");
+	//			return;
 
-			case resetSource:
-				mediaElement.Source = null;
-				return;
+	//		case resetSource:
+	//			mediaElement.Source = null;
+	//			return;
 
-			case loadLocalResource:
-				if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
-					|| DeviceInfo.Platform == DevicePlatform.iOS)
-				{
-					mediaElement.Source = MediaSource.FromResource("AppleVideo.mp4");
-				}
-				else if (DeviceInfo.Platform == DevicePlatform.Android)
-				{
-					mediaElement.Source = MediaSource.FromResource("AndroidVideo.mp4");
-				}
-				else if (DeviceInfo.Platform == DevicePlatform.WinUI)
-				{
-					mediaElement.Source = MediaSource.FromResource("WindowsVideo.mp4");
-				}
-				return;
-		}
-	}
+	//		case loadLocalResource:
+	//			if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
+	//				|| DeviceInfo.Platform == DevicePlatform.iOS)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			else if (DeviceInfo.Platform == DevicePlatform.Android)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			return;
+	//	}
+	//}
 
 	async void ChangeAspectClicked(System.Object sender, System.EventArgs e)
 	{
@@ -211,4 +255,158 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 
 		mediaElement.Aspect = (Aspect)aspectEnum;
 	}
+	//private void SetMediaSource(string source)
+	//{
+	//	switch (source)
+	//	{
+	//		case loadOnlineMp4:
+	//			mediaElement.Source =
+	//				MediaSource.FromUri(
+	//					"cc");
+	//			return;
+
+	//		case loadHls:
+	//			mediaElement.Source
+	//				= MediaSource.FromUri(
+	//					"https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8");
+	//			return;
+
+	//		case resetSource:
+	//			mediaElement.Source = null;
+	//			return;
+
+	//		case loadLocalResource:
+	//			if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
+	//				|| DeviceInfo.Platform == DevicePlatform.iOS)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			else if (DeviceInfo.Platform == DevicePlatform.Android)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+	//			{
+	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
+	//			}
+	//			return;
+	//	}
+	//}
+	//async void ChangeSourceClicked(object sender, EventArgs e)
+	//{
+	//	var result = await DisplayActionSheet("Choose a source", "Cancel", null,
+	//		loadOnlineMp4, loadHls, loadLocalResource, resetSource);
+
+	//	if (!string.IsNullOrEmpty(result))
+	//	{
+	//		SetMediaSource(result);
+	//	}
+	//}
+
+
+	private void SetMediaSource(MediaSource source)
+	{
+		mediaElement.Source = source;
+	}
+
+	//async void ChangeSourceClicked(object sender, EventArgs e)
+	//{
+	//	var result = await DisplayActionSheet("Choose a source", "Cancel", null,
+	//		loadOnlineMp4, loadHls, loadLocalResource, resetSource);
+
+	//	if (!string.IsNullOrEmpty(result))
+	//	{
+	//		switch (result)
+	//		{
+	//			case loadOnlineMp4:
+	//				SetMediaSource(MediaSource.FromUri(new SystemUri("cc")));
+	//				break;
+	//			case loadHls:
+	//				SetMediaSource(MediaSource.FromUri(new SystemUri("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")));
+	//				break;
+	//			case resetSource:
+	//				SetMediaSource(null);
+	//				break;
+	//			case loadLocalResource:
+	//				if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
+	//					|| DeviceInfo.Platform == DevicePlatform.iOS)
+	//				{
+	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
+	//				}
+	//				else if (DeviceInfo.Platform == DevicePlatform.Android)
+	//				{
+	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
+	//				}
+	//				else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+	//				{
+	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
+	//				}
+	//				break;
+	//		}
+	//	}
+	//}
+
+	private void SetMediaSource(System.Uri videoUri)
+	{
+		MediaSourceUri = videoUri;
+		mediaElement.Source = MediaSource.FromUri(videoUri);
+		
+	}
+	async void ChangeSourceClicked(object sender, EventArgs e)
+	{
+		var result = await DisplayActionSheet("Choose a source", "Cancel", null,
+			loadOnlineMp4, loadHls, loadLocalResource, resetSource);
+
+		if (!string.IsNullOrEmpty(result))
+		{
+			switch (result)
+			{
+				case loadOnlineMp4:
+					SetMediaSource(new System.Uri("cc"));
+					break;
+				case loadHls:
+					SetMediaSource(new System.Uri("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"));
+					break;
+				case resetSource:
+					SetMediaSource(null);
+					break;
+				case loadLocalResource:
+					if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
+						|| DeviceInfo.Platform == DevicePlatform.iOS)
+					{
+						SetMediaSource(new System.Uri("abc.mp4"));
+					}
+					else if (DeviceInfo.Platform == DevicePlatform.Android)
+					{
+						SetMediaSource(new System.Uri("abc.mp4"));
+					}
+					else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+					{
+						SetMediaSource(new System.Uri("abc.mp4"));
+					}
+					break;
+			}
+		}
+	}
+
+	public System.Uri? MediaSourceUri { get; set; }
+	IDeviceOrientationService deviceOrientationService;
+
+	private async void btnFullScreen_Clicked(object sender, EventArgs e)
+	{
+		if (MediaSourceUri != null)
+		{
+			CurrentVideoState videoState = new CurrentVideoState
+			{
+				Position = mediaElement.Position,
+				VideoUri = MediaSourceUri,
+			};
+			FullScreenPage page = new FullScreenPage(videoState);
+			//await Navigation.PushAsync(page);
+			await MopupService.Instance.PushAsync(page);
+		}
+	}
+
+
+
 }
