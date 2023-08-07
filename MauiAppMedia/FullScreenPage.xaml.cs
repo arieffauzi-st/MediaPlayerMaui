@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Core.Primitives;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
@@ -19,7 +20,7 @@ public partial class FullScreenPage : PopupPage
         //deviceOrientationService = new DeviceOrientationService();
         //deviceOrientationService.SetDeviceOrientation(displayOrientation: DisplayOrientation.Landscape);
         deviceOrientationService = new AndroidDeviceOrientationService();
-        deviceOrientationService.SetDeviceOrientation(displayOrientation: DisplayOrientation.Landscape);
+        deviceOrientationService.SetDeviceOrientation(displayOrientation: DisplayOrientation.Portrait);
     }
 
     protected override void OnAppearing()
@@ -27,12 +28,14 @@ public partial class FullScreenPage : PopupPage
         base.OnAppearing();
         mediaElement.Source = Video.VideoUri;
         mediaElement.SeekTo(Video.Position);
+        mediaElement.Play();
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
     {
         mediaElement.Source = null;
-        WeakReferenceMessenger.Default.Send(new NotifyFullScreenClosed(true));
+        bool isPlaying = mediaElement.CurrentState == MediaElementState.Playing;
+        WeakReferenceMessenger.Default.Send(new NotifyFullScreenClosed(true, mediaElement.Position));
         await MopupService.Instance.PopAsync();
     }
 
@@ -58,6 +61,7 @@ public partial class FullScreenPage : PopupPage
                 break;
         }
     }
+    
 
 }
 
@@ -67,7 +71,16 @@ public class CurrentVideoState
     public TimeSpan Position { get; set; }
 }
 
+//public class NotifyFullScreenClosed : ValueChangedMessage<bool>
+//{
+//    public NotifyFullScreenClosed(bool value) : base(value) { }
+//}
+
 public class NotifyFullScreenClosed : ValueChangedMessage<bool>
 {
-    public NotifyFullScreenClosed(bool value) : base(value) { }
+    public TimeSpan Position { get; private set; }
+    public NotifyFullScreenClosed(bool value, TimeSpan position) : base(value)
+    {
+        Position = position;
+    }
 }

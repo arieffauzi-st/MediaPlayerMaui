@@ -18,19 +18,20 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	const string loadLocalResource = "Load Local Resource";
 	const string resetSource = "Reset Source to null";
 
-    bool fullScreen = false;
+	
 
-    public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
+	public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
 	{
 		InitializeComponent();
 
 		this.logger = logger;
-//#if ANDROID
-//            btnFullScreen.IsVisible = true;
-//#elif IOS
-//        btnFullScreen.IsVisible = false;
-//#endif
+#if ANDROID
+		btnFullScreen.IsVisible = true;
+#elif IOS
+		        btnFullScreen.IsVisible = false;
+#endif
 		mediaElement.PropertyChanged += MediaElement_PropertyChanged;
+		WeakReferenceMessenger.Default.Register<MediaElementPage, NotifyFullScreenClosed>(this, OnFullScreenClosed);
 
 	}
 
@@ -52,9 +53,13 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 
 	void OnMediaEnded(object? sender, EventArgs e) => logger.LogInformation("Media ended.");
 
+	private TimeSpan currentPosition;
 	void OnPositionChanged(object? sender, MediaPositionChangedEventArgs e)
 	{
 		logger.LogInformation("Position changed to {position}", e.Position);
+
+		currentPosition = e.Position;
+
 		positionSlider.Value = e.Position.TotalSeconds;
 	}
 
@@ -115,21 +120,21 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	//{
 	//	mediaElement.Pause();
 	//}
-    void OnPlayClicked(object? sender, EventArgs e)
-    {
-        if (mediaElement.CurrentState == MediaElementState.Playing)
-        {
-            mediaElement.Pause();
-            playButton.Source = "playicon02.png"; 
-        }
-        else
-        {
-            mediaElement.Play();
-            playButton.Source = "pauseicon02.png"; 
-        }
-    }
+	void OnPlayClicked(object? sender, EventArgs e)
+	{
+		if (mediaElement.CurrentState == MediaElementState.Playing)
+		{
+			mediaElement.Pause();
+			playButton.Source = "playicon02.png";
+		}
+		else
+		{
+			mediaElement.Play();
+			playButton.Source = "pauseicon02.png";
+		}
+	}
 
-    void OnStopClicked(object? sender, EventArgs e)
+	void OnStopClicked(object? sender, EventArgs e)
 	{
 		mediaElement.Stop();
 	}
@@ -350,8 +355,8 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	{
 		MediaSourceUri = videoUri;
 		mediaElement.Source = MediaSource.FromUri(videoUri);
-		
-	}
+
+    }
 	async void ChangeSourceClicked(object sender, EventArgs e)
 	{
 		var result = await DisplayActionSheet("Choose a source", "Cancel", null,
@@ -390,7 +395,7 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	}
 
 	public System.Uri? MediaSourceUri { get; set; }
-	IDeviceOrientationService deviceOrientationService;
+	//IDeviceOrientationService deviceOrientationService;
 
 	private async void btnFullScreen_Clicked(object sender, EventArgs e)
 	{
@@ -402,10 +407,19 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 				VideoUri = MediaSourceUri,
 			};
 			FullScreenPage page = new FullScreenPage(videoState);
-			//await Navigation.PushAsync(page);
+
 			await MopupService.Instance.PushAsync(page);
 		}
 	}
+    private async void OnFullScreenClosed(object sender, NotifyFullScreenClosed message)
+    {
+        if (message.Value)
+        {
+            // Reset the mediaElement position with the one received from FullScreenPage
+            mediaElement.SeekTo(message.Position);
+            mediaElement.Play();
+        }
+    }
 
 
 
