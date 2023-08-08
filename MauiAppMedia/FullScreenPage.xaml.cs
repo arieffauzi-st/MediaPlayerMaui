@@ -29,6 +29,7 @@ public partial class FullScreenPage : PopupPage
         mediaElement.Source = Video.VideoUri;
         mediaElement.SeekTo(Video.Position);
         mediaElement.Play();
+        deviceOrientationService.SetDeviceOrientation(DisplayOrientation.Portrait);
     }
 
     private async void Button_Clicked(object sender, EventArgs e)

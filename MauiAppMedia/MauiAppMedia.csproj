@@ -49,6 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\aspectratio.png" />
 	  <None Remove="Resources\Images\iconaspect.png" />
 	  <None Remove="Resources\Images\iconback.png" />
 	  <None Remove="Resources\Images\iconfullscreen.png" />

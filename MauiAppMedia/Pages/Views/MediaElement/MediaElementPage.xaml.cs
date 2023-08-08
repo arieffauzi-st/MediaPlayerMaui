@@ -17,10 +17,9 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	const string loadHls = "Load HTTP Live Stream (HLS)";
 	const string loadLocalResource = "Load Local Resource";
 	const string resetSource = "Reset Source to null";
+    
 
-	
-
-	public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
+    public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
 	{
 		InitializeComponent();
 
@@ -30,10 +29,12 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 #elif IOS
 		        btnFullScreen.IsVisible = false;
 #endif
-		mediaElement.PropertyChanged += MediaElement_PropertyChanged;
+        
+        mediaElement.PropertyChanged += MediaElement_PropertyChanged;
 		WeakReferenceMessenger.Default.Register<MediaElementPage, NotifyFullScreenClosed>(this, OnFullScreenClosed);
 
 	}
+
 
 	void MediaElement_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 	{
@@ -132,7 +133,9 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 			mediaElement.Play();
 			playButton.Source = "pauseicon02.png";
 		}
-	}
+        isControlsVisible = true;
+        SetControlsVisibility();
+    }
 
 	void OnStopClicked(object? sender, EventArgs e)
 	{
@@ -161,7 +164,9 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 			volumeSlider.IsEnabled = true;
 			mediaElement.Volume = volumeSlider.Value;
 		}
-	}
+        isControlsVisible = true;
+        SetControlsVisibility();
+    }
 
 	void BasePage_Unloaded(object? sender, EventArgs e)
 	{
@@ -259,7 +264,9 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 		}
 
 		mediaElement.Aspect = (Aspect)aspectEnum;
-	}
+        isControlsVisible = true;
+        SetControlsVisibility();
+    }
 	//private void SetMediaSource(string source)
 	//{
 	//	switch (source)
@@ -375,27 +382,27 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 				case resetSource:
 					SetMediaSource(null);
 					break;
-				case loadLocalResource:
+                case loadLocalResource:
 					if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
 						|| DeviceInfo.Platform == DevicePlatform.iOS)
 					{
-						SetMediaSource(new System.Uri("abc.mp4"));
+						SetMediaSource(MediaSource.FromResource("abc.mp4"));
 					}
 					else if (DeviceInfo.Platform == DevicePlatform.Android)
 					{
-						SetMediaSource(new System.Uri("abc.mp4"));
+						SetMediaSource(MediaSource.FromResource("abc.mp4"));
 					}
 					else if (DeviceInfo.Platform == DevicePlatform.WinUI)
 					{
-						SetMediaSource(new System.Uri("abc.mp4"));
+						SetMediaSource(MediaSource.FromResource("abc.mp4"));
 					}
 					break;
 			}
-		}
+        }
 	}
 
 	public System.Uri? MediaSourceUri { get; set; }
-	//IDeviceOrientationService deviceOrientationService;
+	
 
 	private async void btnFullScreen_Clicked(object sender, EventArgs e)
 	{
@@ -410,7 +417,10 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 
 			await MopupService.Instance.PushAsync(page);
 		}
-	}
+        isControlsVisible = true;
+        SetControlsVisibility();
+
+    }
     private async void OnFullScreenClosed(object sender, NotifyFullScreenClosed message)
     {
         if (message.Value)
@@ -420,6 +430,29 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
             mediaElement.Play();
         }
     }
+
+    private bool isControlsVisible = false;
+
+    private void SetControlsVisibility()
+    {
+        playButton.IsVisible = isControlsVisible;
+        // Set visibility for other controls (e.g., btnFullScreen) as needed
+        btnFullScreen.IsVisible = isControlsVisible;
+		muteButton.IsVisible = isControlsVisible;
+        volumeSlider.IsVisible = isControlsVisible;
+		changeAspect.IsVisible = isControlsVisible;
+    }
+
+    private async void OnScreenTapped(object sender, EventArgs e)
+    {
+        isControlsVisible = true;
+        SetControlsVisibility();
+        await Task.Delay(5000); // Hide controls after 5 seconds
+        isControlsVisible = false;
+        SetControlsVisibility();
+    }
+
+
 
 
 

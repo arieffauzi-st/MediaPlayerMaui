@@ -12,7 +12,6 @@
              Title="MediaElement"
              Unloaded="BasePage_Unloaded">
     <pages:BasePage.Resources>
-        <!--<toolkit:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />-->
         <converters:SecondsToStringConverter x:Key="SecondsToStringConverter" />
     </pages:BasePage.Resources>
 
@@ -38,20 +37,65 @@
                 PositionChanged="OnPositionChanged"
                 StateChanged="OnStateChanged"
                 SeekCompleted="OnSeekCompleted"/>
-            <ImageButton
-                        x:Name="btnFullScreen" Clicked="btnFullScreen_Clicked"
-                        Grid.Row="0"
-                        Margin="10"
-                        HeightRequest="40"
-                        HorizontalOptions="End"
-                        Source="iconfullscreen.png"
-                        VerticalOptions="Start"
-                        WidthRequest="40">
-                <ImageButton.Behaviors>
-                    <toolkit:IconTintColorBehavior TintColor="White" />
-                </ImageButton.Behaviors>
-            </ImageButton>
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Padding="10"
+                HorizontalOptions="EndAndExpand"
+                VerticalOptions="EndAndExpand">
+                    <ImageButton
+                                x:Name="btnFullScreen" Clicked="btnFullScreen_Clicked"
+                                Grid.Row="0"
+                                Margin="0,0,0,25" 
+                                HeightRequest="30"
+                                HorizontalOptions="End"
+                                Source="iconfullscreen.png"
+                                VerticalOptions="End"
+                                WidthRequest="40" />
 
+                    <ImageButton 
+                                Grid.Column="0"
+                                x:Name="changeAspect" 
+                                Clicked="ChangeAspectClicked"
+                                Source="aspectratio.png"
+                                Margin="0,0,0,25" 
+                                HeightRequest="30"
+                                WidthRequest="40"
+                                VerticalOptions="End"
+                                HorizontalOptions="End" />  
+            </HorizontalStackLayout>
+        
+            <HorizontalStackLayout
+                Grid.Row="0"
+                Padding="10"
+                HorizontalOptions="StartAndExpand"
+                VerticalOptions="EndAndExpand">
+                <ImageButton
+                    x:Name="playButton"
+                    Clicked="OnPlayClicked"
+                    HeightRequest="30"
+                    WidthRequest="40"
+                    Margin="0,0,0,25" 
+                    Source="pauseicon02.png"
+                    HorizontalOptions="Start"
+                    VerticalOptions="End"/>
+                <ImageButton
+                    x:Name="muteButton"
+                    Clicked="OnMuteClicked"
+                    Margin="0,0,0,25" 
+                    HeightRequest="30"
+                    WidthRequest="40"
+                    Source="volumeicon.png"/>
+                <Slider
+                    x:Name="volumeSlider"
+                    Margin="0,0,0,20" 
+                    Minimum="0"
+                    Maximum="1"
+                    Value="{Binding Source={x:Reference mediaElement}, Path=Volume}"
+                    HeightRequest="40"
+                    WidthRequest="125"
+                    HorizontalOptions="FillAndExpand"/>
+            </HorizontalStackLayout>
+            
             <HorizontalStackLayout Grid.Row="3" Padding="0,0,0,15">
                 <Label HorizontalOptions="Center">
                     <Label.Text>
@@ -76,8 +120,8 @@
             <Grid Grid.Row="2" Padding="0,10,0,10" ColumnDefinitions="*,*,*,*" ColumnSpacing="5">
                 <!--<ImageButton Grid.Column="0" Clicked="OnPlayClicked" Source="iconsplay.png"/>
                 <ImageButton Grid.Column="1" Clicked="OnPauseClicked" Source="pauseicon.png" HeightRequest="50" WidthRequest="50" />-->
-                <ImageButton Grid.Column="0" x:Name="playButton" Clicked="OnPlayClicked" 
-                             HeightRequest="30" WidthRequest="40" Source="pauseicon02.png" />
+                <!--<ImageButton Grid.Column="0" x:Name="playButton" Clicked="OnPlayClicked" 
+                             HeightRequest="30" WidthRequest="40" Source="pauseicon02.png" />-->
 
                 <Button Grid.Column="2" Text="Stop" Clicked="OnStopClicked" />
                 <Button Grid.Column="3" Text="Mute" Clicked="OnMuteClicked">
@@ -104,7 +148,7 @@
                     <Button Grid.Column="1" Clicked="Button_Clicked" Text="Load" />
                 </Grid>
 
-                <Button Text="Change Aspect" Clicked="ChangeAspectClicked" />
+                <!--<Button Text="Change Aspect" Clicked="ChangeAspectClicked" />-->
             </VerticalStackLayout>
 
             <HorizontalStackLayout Grid.Row="5" Padding="0,10,0,10" Spacing="5">
@@ -136,12 +180,12 @@
                 <Button Text="+" Clicked="OnVolumePlusClicked" />
             </HorizontalStackLayout>-->
             
-            <VerticalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5">
+            <!--<VerticalStackLayout Grid.Row="6" Padding="0,10,0,10" Spacing="5">
                 <Grid ColumnDefinitions="*,*">
                     <ImageButton Grid.Column="0" x:Name="muteButton" Clicked="OnMuteClicked" HeightRequest="30" WidthRequest="40" Source="volumeicon.png" />
                     <Slider x:Name="volumeSlider" Grid.Column="1" Minimum="0" Maximum="1" Value="{Binding Source={x:Reference mediaElement}, Path=Volume}" WidthRequest="200" />
                 </Grid>
-            </VerticalStackLayout>
+            </VerticalStackLayout>-->
 
             <VerticalStackLayout Grid.Row="7">
                 <HorizontalStackLayout Padding="0,0,0,10">
@@ -175,6 +219,9 @@
                         Text="Keep screen on" />
                 </HorizontalStackLayout>
             </VerticalStackLayout>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnScreenTapped" />
+            </Grid.GestureRecognizers>
         </Grid>
     </ScrollView>
 </pages:BasePage>
