@@ -40,7 +40,6 @@ public static class MauiProgram
 
 
         RegisterViewsAndViewModels(builder.Services);
-		//RegisterEssentials(builder.Services);
 
 #if DEBUG
 		builder.Logging.AddDebug().SetMinimumLevel(LogLevel.Trace);
@@ -57,11 +56,4 @@ public static class MauiProgram
         services.AddTransient<MediaElementPage>();
         services.AddTransient<MediaElementViewModel>();
     }
-
-	
-	//static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BasePage<TViewModel>
-	//																											where TViewModel : BaseViewModel
-	//{
-	//	return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetPageRoute<TViewModel>());
-	//}
 }

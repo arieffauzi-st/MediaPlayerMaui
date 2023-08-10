@@ -70,30 +70,30 @@
                 HorizontalOptions="StartAndExpand"
                 VerticalOptions="EndAndExpand">
                 <ImageButton
-                    x:Name="playButton"
-                    Clicked="OnPlayClicked"
-                    HeightRequest="30"
-                    WidthRequest="40"
-                    Margin="0,0,0,25" 
-                    Source="pauseicon02.png"
-                    HorizontalOptions="Start"
-                    VerticalOptions="End"/>
+                        x:Name="playButton"
+                        Clicked="OnPlayClicked"
+                        HeightRequest="30"
+                        WidthRequest="40"
+                        Margin="0,0,0,25" 
+                        Source="pausebutton03.png"
+                        HorizontalOptions="Start"
+                        VerticalOptions="End"/>
                 <ImageButton
-                    x:Name="muteButton"
-                    Clicked="OnMuteClicked"
-                    Margin="0,0,0,25" 
-                    HeightRequest="30"
-                    WidthRequest="40"
-                    Source="volumeicon.png"/>
+                        x:Name="muteButton"
+                        Clicked="OnMuteClicked"
+                        Margin="0,0,0,25" 
+                        HeightRequest="30"
+                        WidthRequest="40"
+                        Source="voicebutton.png"/>
                 <Slider
-                    x:Name="volumeSlider"
-                    Margin="0,0,0,20" 
-                    Minimum="0"
-                    Maximum="1"
-                    Value="{Binding Source={x:Reference mediaElement}, Path=Volume}"
-                    HeightRequest="40"
-                    WidthRequest="125"
-                    HorizontalOptions="FillAndExpand"/>
+                        x:Name="volumeSlider"
+                        Margin="0,0,0,20" 
+                        Minimum="0"
+                        Maximum="1"
+                        Value="{Binding Source={x:Reference mediaElement}, Path=Volume}"
+                        HeightRequest="40"
+                        WidthRequest="125"
+                        HorizontalOptions="FillAndExpand"/>
             </HorizontalStackLayout>
             
             <HorizontalStackLayout Grid.Row="3" Padding="0,0,0,15">

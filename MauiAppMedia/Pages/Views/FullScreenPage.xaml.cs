@@ -18,7 +18,6 @@ public partial class FullScreenPage : PopupPage
         Video = currentVideo;
         InitializeComponent();
         //deviceOrientationService = new DeviceOrientationService();
-        //deviceOrientationService.SetDeviceOrientation(displayOrientation: DisplayOrientation.Landscape);
         deviceOrientationService = new AndroidDeviceOrientationService();
         deviceOrientationService.SetDeviceOrientation(displayOrientation: DisplayOrientation.Portrait);
     }
@@ -63,7 +62,6 @@ public partial class FullScreenPage : PopupPage
         }
     }
     
-
 }
 
 public class CurrentVideoState
@@ -71,11 +69,6 @@ public class CurrentVideoState
     public Uri? VideoUri { get; set; }
     public TimeSpan Position { get; set; }
 }
-
-//public class NotifyFullScreenClosed : ValueChangedMessage<bool>
-//{
-//    public NotifyFullScreenClosed(bool value) : base(value) { }
-//}
 
 public class NotifyFullScreenClosed : ValueChangedMessage<bool>
 {

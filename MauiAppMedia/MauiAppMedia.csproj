@@ -54,9 +54,14 @@
 	  <None Remove="Resources\Images\iconback.png" />
 	  <None Remove="Resources\Images\iconfullscreen.png" />
 	  <None Remove="Resources\Images\iconorientation.png" />
+	  <None Remove="Resources\Images\mutebutton03.gif" />
 	  <None Remove="Resources\Images\muteicon.png" />
+	  <None Remove="Resources\Images\pausebutton03.png" />
 	  <None Remove="Resources\Images\pauseicon02.png" />
+	  <None Remove="Resources\Images\playbutton03.png" />
+	  <None Remove="Resources\Images\playbutton04.gif" />
 	  <None Remove="Resources\Images\playicon02.png" />
+	  <None Remove="Resources\Images\voicebutton.png" />
 	  <None Remove="Resources\Images\volumeicon.png" />
 	  <None Remove="Resources\Raw\abc.mp4" />
 	</ItemGroup>
@@ -79,7 +84,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="FullScreenPage.xaml">
+	  <MauiXaml Update="Pages\Views\FullScreenPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Views\MediaElement\MediaElementPage.xaml">

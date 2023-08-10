@@ -17,7 +17,7 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	const string loadHls = "Load HTTP Live Stream (HLS)";
 	const string loadLocalResource = "Load Local Resource";
 	const string resetSource = "Reset Source to null";
-    
+    public System.Uri? MediaSourceUri { get; set; }
 
     public MediaElementPage(MediaElementViewModel viewModel, ILogger<MediaElementPage> logger) : base(viewModel)
 	{
@@ -27,7 +27,7 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 #if ANDROID
 		btnFullScreen.IsVisible = true;
 #elif IOS
-		        btnFullScreen.IsVisible = false;
+		btnFullScreen.IsVisible = false;
 #endif
         
         mediaElement.PropertyChanged += MediaElement_PropertyChanged;
@@ -81,57 +81,17 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 			mediaElement.Speed += 1;
 		}
 	}
-
-	//void OnVolumeMinusClicked(object? sender, EventArgs e)
-	//{
-	//	if (mediaElement.Volume >= 0)
-	//	{
-	//		if (mediaElement.Volume < .1)
-	//		{
-	//			mediaElement.Volume = 0;
-
-	//			return;
-	//		}
-
-	//		mediaElement.Volume -= .1;
-	//	}
-	//}
-
-	//void OnVolumePlusClicked(object? sender, EventArgs e)
-	//{
-	//	if (mediaElement.Volume < 1)
-	//	{
-	//		if (mediaElement.Volume > .9)
-	//		{
-	//			mediaElement.Volume = 1;
-
-	//			return;
-	//		}
-
-	//		mediaElement.Volume += .1;
-	//	}
-	//}
-
-	//void OnPlayClicked(object? sender, EventArgs e)
-	//{
-	//	mediaElement.Play();
-	//}
-
-	//void OnPauseClicked(object? sender, EventArgs e)
-	//{
-	//	mediaElement.Pause();
-	//}
 	void OnPlayClicked(object? sender, EventArgs e)
 	{
 		if (mediaElement.CurrentState == MediaElementState.Playing)
 		{
 			mediaElement.Pause();
-			playButton.Source = "playicon02.png";
+			playButton.Source = "playbutton03.png";
 		}
 		else
 		{
 			mediaElement.Play();
-			playButton.Source = "pauseicon02.png";
+			playButton.Source = "pausebutton03.png";
 		}
         isControlsVisible = true;
         SetControlsVisibility();
@@ -141,11 +101,6 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 	{
 		mediaElement.Stop();
 	}
-
-	//void OnMuteClicked(object? sender, EventArgs e)
-	//{
-	//	mediaElement.ShouldMute = !mediaElement.ShouldMute;
-	//}
 
 	void OnMuteClicked(object? sender, EventArgs e)
 	{
@@ -160,7 +115,7 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 		}
 		else
 		{
-			muteButton.Source = "volumeicon.png";
+			muteButton.Source = "voicebutton.png";
 			volumeSlider.IsEnabled = true;
 			mediaElement.Volume = volumeSlider.Value;
 		}
@@ -267,96 +222,11 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
         isControlsVisible = true;
         SetControlsVisibility();
     }
-	//private void SetMediaSource(string source)
-	//{
-	//	switch (source)
-	//	{
-	//		case loadOnlineMp4:
-	//			mediaElement.Source =
-	//				MediaSource.FromUri(
-	//					"cc");
-	//			return;
-
-	//		case loadHls:
-	//			mediaElement.Source
-	//				= MediaSource.FromUri(
-	//					"https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8");
-	//			return;
-
-	//		case resetSource:
-	//			mediaElement.Source = null;
-	//			return;
-
-	//		case loadLocalResource:
-	//			if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
-	//				|| DeviceInfo.Platform == DevicePlatform.iOS)
-	//			{
-	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
-	//			}
-	//			else if (DeviceInfo.Platform == DevicePlatform.Android)
-	//			{
-	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
-	//			}
-	//			else if (DeviceInfo.Platform == DevicePlatform.WinUI)
-	//			{
-	//				mediaElement.Source = MediaSource.FromResource("abc.mp4");
-	//			}
-	//			return;
-	//	}
-	//}
-	//async void ChangeSourceClicked(object sender, EventArgs e)
-	//{
-	//	var result = await DisplayActionSheet("Choose a source", "Cancel", null,
-	//		loadOnlineMp4, loadHls, loadLocalResource, resetSource);
-
-	//	if (!string.IsNullOrEmpty(result))
-	//	{
-	//		SetMediaSource(result);
-	//	}
-	//}
-
 
 	private void SetMediaSource(MediaSource source)
 	{
 		mediaElement.Source = source;
 	}
-
-	//async void ChangeSourceClicked(object sender, EventArgs e)
-	//{
-	//	var result = await DisplayActionSheet("Choose a source", "Cancel", null,
-	//		loadOnlineMp4, loadHls, loadLocalResource, resetSource);
-
-	//	if (!string.IsNullOrEmpty(result))
-	//	{
-	//		switch (result)
-	//		{
-	//			case loadOnlineMp4:
-	//				SetMediaSource(MediaSource.FromUri(new SystemUri("cc")));
-	//				break;
-	//			case loadHls:
-	//				SetMediaSource(MediaSource.FromUri(new SystemUri("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8")));
-	//				break;
-	//			case resetSource:
-	//				SetMediaSource(null);
-	//				break;
-	//			case loadLocalResource:
-	//				if (DeviceInfo.Platform == DevicePlatform.MacCatalyst
-	//					|| DeviceInfo.Platform == DevicePlatform.iOS)
-	//				{
-	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
-	//				}
-	//				else if (DeviceInfo.Platform == DevicePlatform.Android)
-	//				{
-	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
-	//				}
-	//				else if (DeviceInfo.Platform == DevicePlatform.WinUI)
-	//				{
-	//					SetMediaSource(MediaSource.FromResource("abc.mp4"));
-	//				}
-	//				break;
-	//		}
-	//	}
-	//}
 
 	private void SetMediaSource(System.Uri videoUri)
 	{
@@ -401,8 +271,6 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
         }
 	}
 
-	public System.Uri? MediaSourceUri { get; set; }
-	
 
 	private async void btnFullScreen_Clicked(object sender, EventArgs e)
 	{
@@ -451,9 +319,4 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
         isControlsVisible = false;
         SetControlsVisibility();
     }
-
-
-
-
-
 }
