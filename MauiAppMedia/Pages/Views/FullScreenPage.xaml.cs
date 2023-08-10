@@ -12,6 +12,7 @@ public partial class FullScreenPage : PopupPage
 {
     private readonly IDeviceOrientationService deviceOrientationService;
     public CurrentVideoState Video { get; set; }
+    public string? LocalResourceName { get; set; }
 
     public FullScreenPage(CurrentVideoState currentVideo)
     {
@@ -25,7 +26,16 @@ public partial class FullScreenPage : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        mediaElement.Source = Video.VideoUri;
+        //mediaElement.Source = Video.VideoUri;
+        if (!string.IsNullOrEmpty(LocalResourceName))
+        {
+            mediaElement.Source = MediaSource.FromResource(LocalResourceName);
+        }
+        else if (Video.VideoUri != null)
+        {
+            mediaElement.Source = Video.VideoUri;
+        }
+
         mediaElement.SeekTo(Video.Position);
         mediaElement.Play();
         deviceOrientationService.SetDeviceOrientation(DisplayOrientation.Portrait);

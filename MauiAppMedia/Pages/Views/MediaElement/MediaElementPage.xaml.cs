@@ -243,12 +243,13 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 		{
 			switch (result)
 			{
-				case loadOnlineMp4:
-					SetMediaSource(new System.Uri("cc"));
-					break;
+				//case loadOnlineMp4:
+				//	SetMediaSource(new System.Uri("cc"));
+				//	break;
 				case loadHls:
-					SetMediaSource(new System.Uri("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"));
-					break;
+					//SetMediaSource(new System.Uri("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"));
+                    SetMediaSource(new System.Uri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
+                    break;
 				case resetSource:
 					SetMediaSource(null);
 					break;
@@ -283,7 +284,11 @@ public partial class MediaElementPage : BasePage<MediaElementViewModel>
 			};
 			FullScreenPage page = new FullScreenPage(videoState);
 
-			await MopupService.Instance.PushAsync(page);
+            if (DeviceInfo.Platform == DevicePlatform.Android)
+            {
+                page.LocalResourceName = "abc.mp4"; 
+            }
+            await MopupService.Instance.PushAsync(page);
 		}
         isControlsVisible = true;
         SetControlsVisibility();
